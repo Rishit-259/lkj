@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>To Vrishti — From My Heart</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream:     #fdf8f2;
+    --pink:      #f5d5d5;
+    --pink-deep: #e8b4b4;
+    --lavender:  #ddd5ef;
+    --lav-deep:  #c3b8df;
+    --warm-white:#fffdf9;
+    --text-dark: #3a2e2e;
+    --text-mid:  #6b5757;
+    --text-soft: #9c8585;
+    --glass-bg:  rgba(255,253,249,0.55);
+    --glass-border: rgba(255,200,200,0.25);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    overflow-x: hidden;
+    line-height: 1.8;
+  }
+
+  /* ── CANVAS ── */
+  #particles-canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ── LAYOUT ── */
+  .page-wrap {
+    position: relative;
+    z-index: 1;
+  }
+
+  section {
+    padding: 90px 24px;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* ── FADE-IN ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.9s ease, transform 0.9s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding-top: 0;
+    padding-bottom: 0;
+    max-width: 100%;
+  }
+
+  .hero-inner {
+    max-width: 680px;
+    padding: 0 24px;
+  }
+
+  .hero-eyebrow {
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    font-size: 0.78rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeDown 1.2s 0.3s ease forwards;
+  }
+
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(2.6rem, 7vw, 4.4rem);
+    line-height: 1.15;
+    color: var(--text-dark);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeDown 1.2s 0.6s ease forwards;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--pink-deep);
+  }
+
+  .hero-sub {
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    font-size: 1rem;
+    color: var(--text-mid);
+    line-height: 2;
+    opacity: 0;
+    animation: fadeDown 1.2s 1s ease forwards;
+  }
+
+  .hero-divider {
+    width: 48px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--pink-deep), transparent);
+    margin: 36px auto;
+    opacity: 0;
+    animation: fadeDown 1.2s 1.4s ease forwards;
+  }
+
+  .scroll-hint {
+    margin-top: 64px;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    opacity: 0;
+    animation: fadeDown 1.2s 1.8s ease forwards;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--pink-deep), transparent);
+    animation: scrollPulse 2s 2.2s ease-in-out infinite;
+    opacity: 0;
+    animation: scrollPulse 2s 2.2s ease-in-out infinite;
+  }
+
+  /* ── GLASS CARD ── */
+  .glass-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 20px;
+    padding: 52px 48px;
+    box-shadow: 0 8px 48px rgba(200, 160, 160, 0.08);
+  }
+
+  @media (max-width: 520px) {
+    .glass-card { padding: 36px 24px; }
+  }
+
+  /* ── SECTION LABELS ── */
+  .section-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--lav-deep);
+    margin-bottom: 14px;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    font-size: clamp(1.7rem, 4vw, 2.4rem);
+    color: var(--text-dark);
+    margin-bottom: 32px;
+    line-height: 1.3;
+  }
+
+  .section-title em {
+    font-style: italic;
+    color: var(--pink-deep);
+  }
+
+  /* ── BODY TEXT ── */
+  .body-text {
+    font-size: 0.97rem;
+    color: var(--text-mid);
+    line-height: 2;
+    font-weight: 300;
+  }
+
+  .body-text p + p { margin-top: 1.4em; }
+
+  /* ── SORRY LIST ── */
+  .sorry-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .sorry-list li {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.15rem, 3vw, 1.5rem);
+    font-weight: 300;
+    font-style: italic;
+    color: var(--text-dark);
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(200,160,160,0.2);
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    line-height: 1.5;
+  }
+
+  .sorry-list li:last-child { border-bottom: none; }
+
+  .sorry-dot {
+    flex-shrink: 0;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--pink-deep);
+    margin-top: 8px;
+  }
+
+  /* ── HIGHLIGHT QUOTE ── */
+  .highlight-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--text-mid);
+    line-height: 1.7;
+    border-left: 2px solid var(--pink-deep);
+    padding: 8px 0 8px 24px;
+    margin: 32px 0;
+  }
+
+  /* ── AUDIO PLAYER ── */
+  .audio-section-wrap {
+    text-align: center;
+  }
+
+  .audio-player-card {
+    background: linear-gradient(135deg, rgba(245,213,213,0.4), rgba(221,213,239,0.4));
+    border: 1px solid rgba(220,180,180,0.3);
+    border-radius: 16px;
+    padding: 36px 32px;
+    margin-top: 32px;
+  }
+
+  .audio-waveform {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 48px;
+    margin-bottom: 24px;
+  }
+
+  .wave-bar {
+    width: 3px;
+    border-radius: 3px;
+    background: linear-gradient(to top, var(--pink-deep), var(--lav-deep));
+    animation: waveDance 1.4s ease-in-out infinite;
+  }
+
+  .wave-bar:nth-child(1)  { height: 18px; animation-delay: 0.0s; }
+  .wave-bar:nth-child(2)  { height: 30px; animation-delay: 0.1s; }
+  .wave-bar:nth-child(3)  { height: 42px; animation-delay: 0.2s; }
+  .wave-bar:nth-child(4)  { height: 24px; animation-delay: 0.3s; }
+  .wave-bar:nth-child(5)  { height: 38px; animation-delay: 0.4s; }
+  .wave-bar:nth-child(6)  { height: 48px; animation-delay: 0.5s; }
+  .wave-bar:nth-child(7)  { height: 32px; animation-delay: 0.4s; }
+  .wave-bar:nth-child(8)  { height: 44px; animation-delay: 0.3s; }
+  .wave-bar:nth-child(9)  { height: 22px; animation-delay: 0.2s; }
+  .wave-bar:nth-child(10) { height: 36px; animation-delay: 0.1s; }
+  .wave-bar:nth-child(11) { height: 16px; animation-delay: 0.0s; }
+
+  .audio-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .play-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--pink-deep), var(--lav-deep));
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(200,150,150,0.3);
+  }
+
+  .play-btn:hover { transform: scale(1.06); box-shadow: 0 6px 28px rgba(200,150,150,0.45); }
+  .play-btn svg { margin-left: 3px; }
+
+  .audio-track-bar {
+    flex: 1;
+    max-width: 200px;
+    height: 3px;
+    background: rgba(200,160,160,0.25);
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .audio-progress {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(to right, var(--pink-deep), var(--lav-deep));
+    border-radius: 3px;
+    transition: width 0.1s linear;
+  }
+
+  .audio-time {
+    font-size: 0.72rem;
+    color: var(--text-soft);
+    letter-spacing: 0.05em;
+    min-width: 60px;
+    text-align: right;
+  }
+
+  .audio-note {
+    font-size: 0.82rem;
+    color: var(--text-soft);
+    font-style: italic;
+    line-height: 1.8;
+  }
+
+  .audio-upload-note {
+    margin-top: 16px;
+    font-size: 0.75rem;
+    color: var(--lav-deep);
+    letter-spacing: 0.08em;
+    font-style: normal;
+  }
+
+  /* ── CLOSING SECTION ── */
+  #closing {
+    text-align: center;
+  }
+
+  .closing-large {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    font-size: clamp(1.9rem, 5vw, 3rem);
+    color: var(--text-dark);
+    line-height: 1.3;
+    margin-bottom: 40px;
+  }
+
+  .closing-body {
+    font-size: 0.95rem;
+    color: var(--text-soft);
+    font-weight: 300;
+    line-height: 2.2;
+    margin-bottom: 52px;
+  }
+
+  .closing-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.05rem, 2.5vw, 1.3rem);
+    font-style: italic;
+    font-weight: 300;
+    color: var(--text-mid);
+    max-width: 480px;
+    margin: 0 auto 40px;
+    line-height: 1.8;
+  }
+
+  .signature {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-style: italic;
+    color: var(--text-dark);
+    letter-spacing: 0.04em;
+  }
+
+  /* ── SECTION DIVIDER ── */
+  .soft-divider {
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--pink-deep), transparent);
+    margin: 0 auto 0;
+  }
+
+  /* ── TYPEWRITER ── */
+  .typewriter-line {
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 2px solid var(--pink-deep);
+    width: 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    color: var(--text-mid);
+    font-weight: 300;
+    margin: 28px auto 0;
+    display: inline-block;
+    max-width: 100%;
+  }
+
+  .typewriter-line.typed {
+    animation: typeIn 2.5s steps(44, end) forwards, cursorBlink 0.7s step-end 2.5s infinite;
+    width: auto;
+  }
+
+  /* ── MUSIC TOGGLE ── */
+  #music-toggle {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    z-index: 100;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(180,140,140,0.15);
+    transition: transform 0.2s;
+  }
+
+  #music-toggle:hover { transform: scale(1.1); }
+  #music-toggle svg { transition: opacity 0.3s; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 40px 24px 60px;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    border-top: 1px solid rgba(200,160,160,0.12);
+  }
+
+  footer span { display: block; margin-top: 8px; font-style: italic; text-transform: none; letter-spacing: 0.04em; font-size: 0.78rem; }
+
+  /* ── KEYFRAMES ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(0.8); }
+    50%       { opacity: 1; transform: scaleY(1); }
+  }
+
+  @keyframes waveDance {
+    0%, 100% { transform: scaleY(0.55); opacity: 0.6; }
+    50%       { transform: scaleY(1);    opacity: 1; }
+  }
+
+  @keyframes typeIn {
+    from { width: 0; }
+    to   { width: 100%; }
+  }
+
+  @keyframes cursorBlink {
+    0%, 100% { border-color: var(--pink-deep); }
+    50%       { border-color: transparent; }
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
+    33%       { transform: translateY(-18px) rotate(2deg); opacity: 1; }
+    66%       { transform: translateY(-8px) rotate(-1deg); opacity: 0.8; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fade-in, .wave-bar, .scroll-line { animation: none !important; transition: none !important; }
+    .fade-in { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="particles-canvas"></canvas>
+
+<div class="page-wrap">
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">A personal message</p>
+      <h1 class="hero-title">To <em>Vrishti</em>,<br>From My Heart</h1>
+      <div class="hero-divider"></div>
+      <p class="hero-sub">
+        This isn't a love letter.<br>
+        This isn't a relationship proposal.<br>
+        This is simply an honest apology.
+      </p>
+      <div class="scroll-hint">
+        <span>continue reading</span>
+        <div class="scroll-line"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT HAPPENED -->
+  <section id="what-happened">
+    <div class="glass-card fade-in">
+      <p class="section-eyebrow">01 — context</p>
+      <h2 class="section-title">What I Never<br><em>Properly Explained</em></h2>
+      <div class="body-text">
+        <p>At first, talking to you felt easy.<br>
+        We laughed, joked, and shared conversations that genuinely made my day better.</p>
+        <p>I know I flirted a lot, probably more than I should have.<br>
+        And looking back, I understand how my actions may have created expectations that I wasn't ready to fulfill.</p>
+        <p>The truth is that I was never really prepared for a relationship.<br>
+        Not because of you.<br>
+        Not because you did something wrong.</p>
+        <p>I was dealing with my own situations, responsibilities, confusion, and a schedule that often pulled me away from people who mattered.</p>
+        <p>None of that excuses my behavior, though.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="soft-divider fade-in"></div>
+
+  <!-- APOLOGY -->
+  <section id="apology">
+    <div class="glass-card fade-in">
+      <p class="section-eyebrow">02 — apology</p>
+      <h2 class="section-title"><em>I'm Sorry</em></h2>
+
+      <ul class="sorry-list">
+        <li><span class="sorry-dot"></span>I'm sorry for disappearing.</li>
+        <li><span class="sorry-dot"></span>I'm sorry for replying late.</li>
+        <li><span class="sorry-dot"></span>I'm sorry for making it seem like I didn't care.</li>
+      </ul>
+
+      <div class="body-text" style="margin-top: 32px;">
+        <p>The reality is that I often got caught up in everything happening around me and failed to communicate properly.</p>
+        <p>You deserved honesty.<br>You deserved clarity.</p>
+        <p>And instead of explaining things, I became distant.<br>That wasn't fair to you.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="soft-divider fade-in"></div>
+
+  <!-- IMPORTANT MESSAGE -->
+  <section id="message">
+    <div class="glass-card fade-in">
+      <p class="section-eyebrow">03 — what matters</p>
+      <h2 class="section-title">What I Want You<br><em>To Know</em></h2>
+      <div class="body-text">
+        <p>I don't want this page to make you feel guilty.<br>
+        I don't want sympathy.</p>
+        <p>I simply want you to know that my distance was never because you weren't enough.</p>
+      </div>
+
+      <div class="highlight-quote">
+        You were kind. You were genuine.<br>
+        You treated me better than I probably deserved.
+      </div>
+
+      <div class="body-text">
+        <p>My absence came from my own circumstances and mistakes, not because of your value.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="soft-divider fade-in"></div>
+
+  <!-- AUDIO -->
+  <section id="audio">
+    <div class="glass-card fade-in audio-section-wrap">
+      <p class="section-eyebrow">04 — voice message</p>
+      <h2 class="section-title">A Message In<br><em>My Own Voice</em></h2>
+      <p class="body-text" style="margin-bottom: 0;">Sometimes words written on a screen don't carry the whole story.<br>That's why I recorded this message.</p>
+
+      <div class="audio-player-card">
+        <div class="audio-waveform" id="waveform">
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+        </div>
+
+        <div class="audio-controls">
+          <button class="play-btn" id="playBtn" onclick="toggleAudio()" aria-label="Play audio">
+            <svg id="playIcon" width="18" height="18" viewBox="0 0 18 18" fill="white">
+              <polygon points="5,3 15,9 5,15"/>
+            </svg>
+          </button>
+          <div class="audio-track-bar" id="trackBar" onclick="seekAudio(event)">
+            <div class="audio-progress" id="audioProgress"></div>
+          </div>
+          <span class="audio-time" id="audioTime">0:00</span>
+        </div>
+
+        <p class="audio-note">A personal recording — listen when you're ready.</p>
+        <p class="audio-upload-note">↑  <code></code> </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="soft-divider fade-in"></div>
+
+  <!-- CLOSING -->
+  <section id="closing" class="fade-in">
+    <p class="closing-large">Thank You For Every<br><em style="font-family:'Cormorant Garamond',serif;color:var(--pink-deep);font-weight:300;">Conversation.</em></p>
+    <p class="closing-body">
+      I don't expect anything from this.<br>
+      No reply.<br>
+      No forgiveness.<br>
+      No second chance.<br><br>
+      I only wanted to tell the truth<br>and apologize properly.
+    </p>
+    <p class="closing-quote">
+      "Some apologies aren't meant to fix the past.<br>
+      They're meant to respect the person who deserved better."
+    </p>
+    <p class="signature">— Rishit</p>
+
+    <!-- typewriter line appears after a small delay -->
+    <p id="typewriter-line" class="typewriter-line"></p>
+  </section>
+
+</div><!-- .page-wrap -->
+
+<!-- FOOTER -->
+<footer>
+  <div>June 2026</div>
+  <span>Made with honesty.</span>
+</footer>
+
+<!-- MUSIC TOGGLE -->
+<button id="music-toggle" onclick="toggleMusic()" title="Toggle ambient music" aria-label="Toggle music">
+  <svg id="musicIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#b89a9a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 18V5l12-2v13"/>
+    <circle cx="6" cy="18" r="3"/>
+    <circle cx="18" cy="16" r="3"/>
+  </svg>
+</button>
+
+<audio id="bgMusic" loop>
+  <!-- Replace src with your ambient audio file path -->
+  <source src="ambient.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="voiceAudio">
+  <!-- Replace with your voice message file -->
+  <source src="audio-message.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+/* ── PARTICLES ── */
+(function() {
+  const canvas = document.getElementById('particles-canvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let W, H;
+
+  const COLORS = [
+    'rgba(245,213,213,',
+    'rgba(221,213,239,',
+    'rgba(253,248,242,',
+    'rgba(232,180,180,',
+    'rgba(195,184,223,'
+  ];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function randomBetween(a, b) { return a + Math.random() * (b - a); }
+
+  function createParticle() {
+    return {
+      x: randomBetween(0, W),
+      y: randomBetween(0, H),
+      r: randomBetween(2, 6),
+      vx: randomBetween(-0.15, 0.15),
+      vy: randomBetween(-0.25, -0.05),
+      opacity: randomBetween(0.3, 0.85),
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      life: 0,
+      maxLife: randomBetween(300, 700)
+    };
+  }
+
+  function init() {
+    resize();
+    particles = Array.from({ length: 80 }, createParticle);
+    window.addEventListener('resize', resize);
+    requestAnimationFrame(loop);
+  }
+
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach((p, i) => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life++;
+      const frac = p.life / p.maxLife;
+      const alpha = frac < 0.1 ? frac * 10 * p.opacity : frac > 0.8 ? (1 - frac) * 5 * p.opacity : p.opacity;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color + Math.max(0, Math.min(1, alpha)) + ')';
+      ctx.fill();
+      if (p.life >= p.maxLife || p.y < -20) {
+        particles[i] = createParticle();
+        particles[i].y = H + 10;
+        particles[i].life = 0;
+      }
+    });
+    requestAnimationFrame(loop);
+  }
+
+  init();
+})();
+
+/* ── SCROLL FADE-IN ── */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+/* ── TYPEWRITER ── */
+(function() {
+  const el = document.getElementById('typewriter-line');
+  const text = 'Thank you for being you, Vrishti.';
+  let triggered = false;
+
+  const obs = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting && !triggered) {
+      triggered = true;
+      el.style.width = '0';
+      el.style.borderRight = '2px solid var(--pink-deep)';
+      let i = 0;
+      const interval = setInterval(() => {
+        el.textContent = text.slice(0, ++i);
+        el.style.width = 'auto';
+        if (i >= text.length) {
+          clearInterval(interval);
+          setTimeout(() => { el.style.borderRight = 'none'; }, 2000);
+        }
+      }, 60);
+    }
+  }, { threshold: 0.5 });
+
+  obs.observe(el);
+})();
+
+/* ── AUDIO PLAYER ── */
+const voiceAudio = document.getElementById('voiceAudio');
+const playIcon   = document.getElementById('playIcon');
+const audioProgress = document.getElementById('audioProgress');
+const audioTime  = document.getElementById('audioTime');
+let isPlaying = false;
+
+voiceAudio.addEventListener('timeupdate', () => {
+  if (!voiceAudio.duration) return;
+  const pct = (voiceAudio.currentTime / voiceAudio.duration) * 100;
+  audioProgress.style.width = pct + '%';
+  const m = Math.floor(voiceAudio.currentTime / 60);
+  const s = Math.floor(voiceAudio.currentTime % 60).toString().padStart(2,'0');
+  audioTime.textContent = m + ':' + s;
+});
+
+voiceAudio.addEventListener('ended', () => {
+  isPlaying = false;
+  playIcon.innerHTML = '<polygon points="5,3 15,9 5,15"/>';
+  audioProgress.style.width = '0%';
+  audioTime.textContent = '0:00';
+});
+
+function toggleAudio() {
+  if (!voiceAudio.src || voiceAudio.readyState === 0) {
+    audioTime.textContent = '—';
+    return;
+  }
+  if (isPlaying) {
+    voiceAudio.pause();
+    playIcon.innerHTML = '<polygon points="5,3 15,9 5,15"/>';
+  } else {
+    voiceAudio.play().catch(() => {});
+    playIcon.innerHTML = '<rect x="5" y="3" width="4" height="12" rx="1"/><rect x="13" y="3" width="4" height="12" rx="1"/>';
+  }
+  isPlaying = !isPlaying;
+}
+
+function seekAudio(e) {
+  if (!voiceAudio.duration) return;
+  const rect = document.getElementById('trackBar').getBoundingClientRect();
+  const pct = (e.clientX - rect.left) / rect.width;
+  voiceAudio.currentTime = pct * voiceAudio.duration;
+}
+
+/* ── AMBIENT MUSIC TOGGLE ── */
+const bgMusic   = document.getElementById('bgMusic');
+const musicIcon = document.getElementById('musicIcon');
+let musicOn = false;
+
+function toggleMusic() {
+  if (musicOn) {
+    bgMusic.pause();
+    musicIcon.style.opacity = '0.4';
+  } else {
+    bgMusic.volume = 0.18;
+    bgMusic.play().catch(() => {});
+    musicIcon.style.opacity = '1';
+  }
+  musicOn = !musicOn;
+}
+
+/* ── PAUSE WAVEFORM ANIMATION WHEN NOT PLAYING ── */
+document.querySelectorAll('.wave-bar').forEach(b => {
+  b.style.animationPlayState = 'paused';
+});
+document.getElementById('playBtn').addEventListener('click', () => {
+  const state = isPlaying ? 'running' : 'paused';
+  document.querySelectorAll('.wave-bar').forEach(b => {
+    b.style.animationPlayState = state;
+  });
+});
+</script>
+</body>
+</html>
